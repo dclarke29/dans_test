@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Recipe App</title>
+  </head>
+  <body>
+    <h1>Recipe App</h1>
+    <div>
+      <label for="ingredient-input">Enter your ingredients:</label>
+      <input type="text" id="ingredient-input" placeholder="Enter an ingredient">
+      <button id="add-ingredient-btn">+</button>
+    </div>
+    <ul id="ingredient-list-ul"></ul>
+    <button id="get-recipe-btn">Get Recipes</button>
+
+    <script>
+      const ingredientInput = document.getElementById("ingredient-input");
+      const addIngredientBtn = document.getElementById("add-ingredient-btn");
+      const ingredientListUl = document.getElementById("ingredient-list-ul");
+      const getRecipeBtn = document.getElementById("get-recipe-btn");
+      const apiKey = "YOUR_API_KEY_HERE";
+
+      addIngredientBtn.addEventListener("click", function() {
+        if (ingredientInput.value !== "") {
+          const ingredientLi = document.createElement("li");
+          const ingredientText = document.createTextNode(ingredientInput.value);
+          const removeIngredientBtn = document.createElement("button");
+          const removeIngredientText = document.createTextNode("x");
+
+          removeIngredientBtn.appendChild(removeIngredientText);
+          removeIngredientBtn.classList.add("remove-ingredient-btn");
+
+          ingredientLi.appendChild(ingredientText);
+          ingredientLi.appendChild(removeIngredientBtn);
+
+          ingredientListUl.appendChild(ingredientLi);
+          ingredientInput.value = "";
+        }
+      });
+
+      ingredientInput.addEventListener("keypress", function(event) {
+        if (event.keyCode === 13 && ingredientInput.value !== "") {
+          const ingredientLi = document.createElement("li");
+          const ingredientText = document.createTextNode(ingredientInput.value);
+          const removeIngredientBtn = document.createElement("button");
+          const removeIngredientText = document.createTextNode("x");
+
+          removeIngredientBtn.appendChild(removeIngredientText);
+          removeIngredientBtn.classList.add("remove-ingredient-btn");
+
+          ingredientLi.appendChild(ingredientText);
+          ingredientLi.appendChild(removeIngredientBtn);
+
+          ingredientListUl.appendChild(ingredientLi);
+          ingredientInput.value = "";
+        }
+      });
+
+      getRecipeBtn.addEventListener("click", function() {
+        let ingredients = "";
+        const ingredientLis = ingredientListUl.querySelectorAll("li");
+
+        ingredientLis.forEach(function(ingredientLi) {
+          ingredients += ingredientLi.firstChild.textContent + ",";
+        });
+
+        ingredients = ingredients.slice(0, -1);
+
+        fetch(`https://api.spoonacular.com/recipes/findByIngredients?ingredients=${ingredients}&number=5&apiKey=${apiKey}`)
+          .then(function(response) {
+            return response.json();
+          })
+          .then(function(recipes) {
+            console.log(recipes);
+          })
+          .catch(function(error) {
+            console.log(error);
+          });
+      });
+    </script>
+  </body>
+</html>
